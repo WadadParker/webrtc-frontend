@@ -4,11 +4,20 @@ const Sender = () => {
     const [socket,setSocket] = useState<WebSocket | null>(null);
 
     const startSendingVideo = async () => {
+        if (!socket) return;
         // Create an offer
         const pc = new RTCPeerConnection();
         const offer = await pc.createOffer(); // sdp
         await pc.setLocalDescription(offer);
         socket?.send(JSON.stringify({ type: 'createOffer', sdp: pc.localDescription}));
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'createAnswer') {
+                pc.setRemoteDescription(data.sdp);
+            }
+        }
+
     }
 
 
@@ -17,6 +26,8 @@ const Sender = () => {
         socket.onopen = () => {
             socket.send(JSON.stringify({ type: 'sender'}))
         }
+        setSocket(socket)
+
     },[]);
 
   return (
