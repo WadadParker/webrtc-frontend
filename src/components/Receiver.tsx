@@ -20,12 +20,6 @@ const Receiver = () => {
   const startReceiving = (socket: WebSocket) => {
     const pc = new RTCPeerConnection();
 
-    pc.ontrack = (event) => {
-        if (videoRef.current) {
-            videoRef.current.srcObject = event.streams[0];
-          }
-    };
-
     socket.onmessage = async (event) => {
       const message = JSON.parse(event.data);
 
@@ -41,7 +35,12 @@ const Receiver = () => {
         );
       } else if (message.type === "iceCandidate") {
         await pc.addIceCandidate(message.candidate);
-      }
+      }};
+
+    pc.ontrack = (event) => {
+    if (videoRef.current) {
+        videoRef.current.srcObject = event.streams[0];
+        }
     };
   };
 

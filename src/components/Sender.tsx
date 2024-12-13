@@ -49,7 +49,7 @@ const Sender = () => {
         socket.send(JSON.stringify({ type: "iceCandidate", candidate: event.candidate }));
       }
     };
-
+    // Triggered when you add new media
     pc.onnegotiationneeded = async () => {
       try {
         const offer = await pc.createOffer();
@@ -66,14 +66,6 @@ const Sender = () => {
   const getCameraStreamAndSend = async (pc: RTCPeerConnection) => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      const videoElement = document.createElement("video");
-
-      videoElement.srcObject = stream;
-      videoElement.classList.add("border", "rounded");
-      videoElement.play();
-
-      document.querySelector("#pageOne")?.appendChild(videoElement);
-
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
     } catch (error) {
       console.error("Error accessing media devices:", error);
